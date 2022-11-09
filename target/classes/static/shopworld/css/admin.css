@@ -1,0 +1,112 @@
+*{
+    box-sizing: border-box;
+    }
+    .container-fluid{
+        max-width: 100%;
+        padding: 0;
+    }
+
+    /* header */
+    header{
+        background-color: #303030;
+        color: rgb(230, 228, 228);
+        padding: 10px 0;
+        border-bottom: #111 2px solid;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+    }
+    .content-header{
+        justify-content: space-between;
+        align-items: center;
+    }
+    .content-header .info h5{
+        font-size: 16px;
+        margin-right: 50px;
+    }
+    .content-header .info a{
+        color: rgb(230, 228, 228);
+    }
+
+    /* menu */
+
+    .content{
+        margin-top: 54px;
+    }
+    .nav{
+        background-color: #303030;
+        width: 20%;
+        position: fixed;
+        bottom: 0;
+        top: 6.5%;
+    }
+    .nav-list{
+        list-style: none;
+        margin-top: 70px;
+        padding-left: 20px;
+    }
+    .nav-list-item{
+        padding: 20px 0;
+    }
+    .nav-list-item a{
+        color: rgb(230, 228, 228);
+        font-size: 18px;
+        font-weight: 600;
+        padding: 10px;
+    }
+    .nav-list-item a:hover{
+        text-decoration: none;
+        background-color: rgb(98, 98, 98);
+    }
+
+    /* //content */
+    .main-content{
+        left: 5%;
+        padding: 20px;
+    }
+    .wrap-img{
+        padding: 5px;
+        width: 100%;
+        height: 215px;
+        text-align: center;
+    }
+    .wrap-img img{
+        width: 100%;
+        height: 205px;
+    }
+    .btn-block{
+        display: flex;
+        justify-content: space-between;
+    }
+    .td-img{
+        max-width: 100px;
+        max-height: 100px;
+    }
+    .td-img img{
+        width: 100%;
+    }
+    .tbody-list-product tr{
+        line-height: 60px;
+    }
+    .td-id{
+        text-align: center;
+    }
+    small{
+        color: crimson;
+        font-size: 15px;
+    }
+
+    .detail-order .card-header, .card-body{
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+    .detail-order .card p{
+        margin: 7px 0;
+    }
+    .detail-order .info-product{
+        /* background-color: rgb(224, 223, 223); */
+        border: 1px solid silver;
+        padding: 20px;
+    }

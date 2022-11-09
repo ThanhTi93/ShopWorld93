@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{admin/dashboardLayout.html}">
+
+<head>
+</head>
+
+<body>      
+  <!--           list-account
+            <div class="list-account" layout:fragment="content">
+               
+            </div> -->
+            
+            <div class="page-content" layout:fragment="content">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card" >
+                            <div class="card-header">
+                                <h4 class="card-title">Number of orders and their prices</h4>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="barChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card" >
+                            <div class="card-header">
+                                <h4 class="card-title">Total orders percentage per months </h4>
+                            </div>
+                            <div>
+                                <canvas id="pieChart"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+        <script>
+            var chart_order_model=[];
+            chart_order_model.total_order_price="[[${total_order_price}]]".split(",").map(Number);
+            chart_order_model.total_order_number="[[${total_order_number}]]".split(",").map(Number);
+          
+        </script>
+
+        <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            $(document).ready(function() {
+                // bar chart
+                let MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                let color = Chart.helpers.color;
+                let barChartData = {
+                    labels: MONTHS,
+                    datasets: [{
+                        label: 'Total price',
+                        backgroundColor: color('red').alpha(0.5).rgbString(),
+                        borderColor: 'red',
+                        borderWidth: 1,
+                        data: chart_order_model.total_order_price
+                    }, {
+                        label: 'Total order',
+                        backgroundColor: color('blue').alpha(0.5).rgbString(),
+                        borderColor: 'blue',
+                        borderWidth: 1,
+                        data: chart_order_model.total_order_number
+                    }]
+
+                };
+
+                let ctx = document.getElementById("barChart").getContext("2d");
+                window.myBar = new Chart(ctx, {
+                    type: 'bar',
+                    data: barChartData,
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Bar Chart'
+                        }
+                    }
+                });
+            });
+
+
+            $(document).ready(function() {
+                let color = Chart.helpers.color;
+                let MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                var config = {
+                    type: 'pie',
+                    data: {
+                        datasets: [{
+                            data:chart_order_model.total_order_number,
+                            backgroundColor: [
+                                color('red').alpha(0.5).rgbString(),
+                                color('orange').alpha(0.5).rgbString(),
+                                color('yellow').alpha(0.5).rgbString(),
+                                color('green').alpha(0.5).rgbString(),
+                                color('blue').alpha(0.5).rgbString(),
+                                color('purple').alpha(0.5).rgbString(),
+                                color('pink').alpha(0.5).rgbString(),
+                                color('orange').alpha(0.5).rgbString(),
+                                color('brown').alpha(0.5).rgbString(),
+                                color('black').alpha(0.5).rgbString(),
+                                color('lavender').alpha(0.5).rgbString(),
+                                color('gray').alpha(0.5).rgbString()
+                            ],
+                            label: 'Dataset 1'
+                        }],
+                        labels: MONTHS
+                    },
+                    options: {
+                        responsive: true
+                    }
+                };
+
+                var ctx = document.getElementById("pieChart").getContext("2d");
+                window.myPie = new Chart(ctx, config);
+            });
+        </script>
+          </div>
+</body>
+
+</html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{admin/dashboardLayout.html}">
+
+<head>
+</head>
+
+<body>
+
+
+
+
+<div class="form-category" layout:fragment="content">
+	<h2>Quản lý danh mục</h2>
+	<hr>
+
+	<form th:action="@{/admin/categories/saveOrUpdate}" method="post" class="mt-5" th:object="${category}">		
+		<input type="hidden" th:field="*{isEdit}" />
+		<div class="form-group">
+			<label for="id">Mã loại hàng</label>
+			<input type="text" class="form-control" placeholder="Mã loại hàng" id="id" th:field="*{id}"
+				readonly>
+		</div>
+
+		<div class="form-group">
+			<label for="name">Tên loại hàng</label>
+			<input type="text" class="form-control" placeholder="Tên loại hàng" id="name"
+				th:field="*{name}">
+				<small th:if="${#fields.hasErrors('name')}" 
+				th:class="${#fields.hasErrors('name')}? error"  style="color: crimson;">
+				Tên loại hàng phải chứa ít nhất 5 ký tự</small>
+				
+		</div>
+		<hr class="mt-4">
+		<div class="btn-block">
+			<div class="btn-block-main">
+				<button class="btn btn-primary">					
+					<span th:if="${category.isEdit}">Cập nhật</span>
+					<span th:unless="${category.isEdit}">Thêm mới</span>
+				</button>				
+				<a th:href="@{/admin/category/add}" class="btn btn-dark ml-3">Hủy bỏ</a>
+			</div>
+			<div class="btn-block-extra">
+				<a th:href="@{/admin/categories}" class="btn btn-info">Danh sách</a>
+			</div>
+		</div>
+	</form>
+
+	<!-- modal -->
+	<div class="modal fade" id="confirmDeleteCategory" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <h5 class="modal-title">Xác nhận thông tin</h5>
+			  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div class="modal-body">
+			  Bạn muốn xóa loại hàng "<strong id="categoryName"></strong>"?
+			</div>
+			<div class="modal-footer">
+				<a id="yesOption" type="button" class="btn btn-danger">Xóa</a>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+			</div>
+		  </div>
+		</div>
+	  </div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{admin/dashboardLayout.html}">
+
+<head>
+</head>
+
+<body>
+
+    <div class="detail-order" layout:fragment="content">
+        <div class="row" style="justify-content: space-between;">
+            <h2> Chi tiết đơn hàng</h2>
+            <a th:href="@{/admin/order}" class="btn btn-info" style="padding-top: 10px;">Danh sách đơn hàng</a>
+        </div>
+        <hr>
+        <form th:action="@{/admin/order/update}" method="post" th:object="${order}">
+            <div class="info">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6><i class="fa-solid fa-circle-info"></i> Thông tin đơn hàng</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="float-left">
+                                  <div class="form-group">
+                                      <label for="name"><b>Ma don hang</b></label>
+                                      <input type="text" class="form-control" id="name" th:field="*{orderId}" readonly>
+                                   </div>   
+                                  <div class="form-group">
+                                     <label for="name"><b>Order Date</b></label>
+                                     <p><b th:text="*{#dates.format(orderDate, 'dd-MM-yyyy')}"></b></p>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6><i class="fa-solid fa-money-check-dollar"></i> Thanh toán</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="float-left">
+                                    <p>Trạng thái thanh toán</p>
+                                    <p><b>Thanh toán trực tiếp</b></p>
+                                </div>
+                                <div class="float-right">
+                                    <div class="form-group">
+                                        <select th:field="*{statusCheckout}" class="form-control">
+                                            <option value="false">Chưa thanh toán</option>
+                                            <option value="true">Đã thanh toán</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6><i class="fa-solid fa-truck-fast"></i> Giao hàng</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="float-left">
+                                    <p>Trạng thái giao hàng</p>
+                                    <p><b>Giao hàng tận nơi</b></p>
+                                </div>
+                                <div class="float-right text-right">
+                                    <div class="form-group">
+                                        <select th:field="*{status}" class="form-control">
+                                            <option value="0">Đang xử lý</option>
+                                            <option value="1">Đang vận chuyển</option>
+                                            <option value="2">Đã giao</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="row main mt-4">
+                <div class="col-9 info-product">
+                    <h5><i class="fa-solid fa-cart-arrow-down"></i> Thông tin sản phẩm</h5>
+                    <hr>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Ảnh</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Đơn giá</th>
+                                <th>Thành tiền</th>
+                            </tr>
+                        </thead>
+                         <tbody>
+                            <tr style="line-height: 50px;" th:each="item : ${listOrderDetails}">
+                                <td style="max-width: 50px;"><img th:src="@{${'/admin/products/images/' + item.product.image}}"
+                                        width="100%"></td>
+                                <td style="word-wrap: break-word; max-width: 350px;">[[${item.product.name}]]</td>
+                                <td style="width: 100px;">[[${item.quantity}]]</td>
+                                <td>[[${#numbers.formatDecimal(item.unitPrice, 0, 'POINT', 0, 'POINT')}]]
+                                    <span class="vnd">đ</span>
+                                </td>
+                                <td>[[${#numbers.formatDecimal(item.quantity * item.unitPrice, 0, 'POINT', 0,
+                                    'POINT')}]]
+                                    <span class="vnd">đ</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr>
+                    <div class="offset-6 mt-5">
+                        <div class="float-left">
+                            <p>Tổng tiền: </p>
+                            <p>Phí vận chuyển: </p>
+                            <p>Giảm giá: </p>
+                            <h6>Tổng tiền thanh toán: </h6>
+                        </div>
+                        <div class="float-right text-right">
+                            <p>[[${#numbers.formatDecimal(total, 0, 'POINT', 0, 'POINT')}]]đ</p>
+                            <p>0đ</p>
+                            <p>0đ</p>
+                            <h6 style="color: crimson;">[[${#numbers.formatDecimal(total, 0, 'POINT', 0, 'POINT')}]]đ
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3 info-customer">
+                    <h5><i class="fa-solid fa-user-large"></i> Thông tin khách hàng</h5>
+                    <hr>
+                    <input type="hidden">
+                    <div class="form-group">
+                        <label for="name"><b>Họ tên</b></label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone"><b>Số điện thoại</b></label>
+                        <input type="text" class="form-control" id="phone" th:field="*{phone}">
+                    </div>
+                    <div class="form-group">
+                        <label for="address"><b>Địa chỉ nhận hàng</b></label>
+                        <textarea name="" id="address" rows="3" class="form-control" th:field="*{address}"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="note"><b>Ghi chú của khách hàng</b></label>
+                        <textarea name="" id="note" rows="3" class="form-control" th:field="*{note}"></textarea>
+                    </div>
+                    <button class="btn btn-primary"><i class="fa-solid fa-file-pen"></i> Update</button>
+                    <a th:data-id="${order.orderId}" 
+                        th:data-name="${order.orderId}"
+                        onclick="showConfirmModalOrder(this.getAttribute('data-id'), this.getAttribute('data-name'))"
+                        class="btn btn-danger ml-3"><i class="fa-solid fa-trash-can"></i> Xóa</a>
+                </div>
+            </div>
+        </form>
+
+        <script>
+            function showConfirmModalOrder(id, name) {
+                $('#orderId').text(name);
+                $('#yesOption').attr('href', '/polyshop/admin/order/delete/' + id);
+                $('#confirmDeleteOrder').modal('show');
+                console.log(name);
+            }
+        </script>
+
+        <!-- modal -->
+        <div class="modal fade" id="confirmDeleteOrder" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Xác nhận thông tin</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Bạn muốn xóa hóa đơn "<strong id="orderId">[[${order.orderId}]]</strong>"?
+                </div>
+                <div class="modal-footer">
+                    <a id="yesOption" type="button" class="btn btn-danger">Xóa</a>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+
+
+</body>
+
+</html>

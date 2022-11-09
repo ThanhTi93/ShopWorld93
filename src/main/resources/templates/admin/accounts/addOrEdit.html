@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{admin/dashboardLayout.html}">
+
+<head>
+</head>
+
+<body>
+	<!-- form-user -->
+	<div class="form-user" layout:fragment="content">
+		<h2>Quản lý người dùng</h2>
+		<hr>
+
+		<form th:action="@{/admin/accounts/saveOrUpdate}" 
+			method="post" th:object="${account}">
+			<input type="hidden" th:field="*{checkEdit}" />
+			<div class="form-group" th:unless="${account.checkEdit}">
+				<label for="username">Tên đăng nhập</label>
+				<input type="text" class="form-control" id="username"
+				placeholder="Tên đăng nhập" th:field="*{username}">
+				<small th:if="${#fields.hasErrors('username')}">
+					Tên đăng nhập phải chứa ít nhất 6 ký tự
+				</small>
+			</div>
+			<div class="form-group" th:if="${account.checkEdit}">
+				<label for="username">Tên đăng nhập</label>
+				<input type="text" class="form-control" id="username"
+				placeholder="Tên đăng nhập" th:field="*{username}" readonly>
+			</div>
+			<div class="form-group">
+				<label for="Password">Mật khẩu</label>
+				<input type="password" class="form-control" id="Password"
+				placeholder="Mật khẩu" th:field="*{password}">
+				<small th:if="${#fields.hasErrors('password')}">
+					Mật khẩu phải chứa ít nhất 6 ký tự
+				</small>
+			</div>
+			<div class="form-group">
+				<label for="Fullname">Họ và tên</label>
+				<input type="text" class="form-control" id="Fullname"
+				placeholder="Họ và tên" th:field="*{name}">
+				<small th:if="${#fields.hasErrors('name')}">
+					Họ tên phải chứa ít nhất 5 ký tự
+				</small>
+			</div>
+			<div class="form-group">
+				<label for="Email">Email</label>
+				<input type="email" class="form-control" id="Email"
+				placeholder="Email" th:field="*{email}">
+				<small th:if="${#fields.hasErrors('email')}">
+					Email không đúng định dạng
+				</small>
+			</div>
+			<div class="form-group">
+				<label for="Phone">Điện thoại</label>
+				<input type="text" class="form-control" id="Phone"
+				placeholder="Điện thoại" th:field="*{phone}">
+				<small th:if="${#fields.hasErrors('phone')}">
+					Số điện thoại không đúng định dạng
+				</small>
+			</div>
+			<div class="form-group">
+				<label for="role">Vai trò</label>
+				<select id="role" th:field="*{role}" class="form-control">
+					<option value="false">Người dùng</option>
+					<option value="true">Quản lý</option>
+				</select>
+			</div>
+			<hr>
+			<button class="btn btn-primary">					
+					<span th:if="${account.checkEdit}">Cập nhật</span>
+					<span th:unless="${account.checkEdit}">Thêm mới</span>
+				</button>	
+			<a th:if="${account.checkEdit}" 
+				th:data-id="${account.username}" 
+				th:data-name="${account.name}"
+				onclick="showConfirmModalDialogAccount(this.getAttribute('data-id'), this.getAttribute('data-name'))" 
+				class="btn btn-danger ml-3">Xóa</a>
+			<a th:href="@{/admin/accounts/add}" class="btn btn-dark ml-3">Hủy bỏ</a>
+			<a th:href="@{/admin/accounts}" class="btn btn-info float-right">Danh sách người dùng</a>
+		</form>
+
+		<script>
+			function showConfirmModalDialogAccount(id, name) {
+				$('#fullname').text(name);
+				$('#yesOption').attr('href', '/admin/accounts/delete/' + id);
+				$('#confirmDeleteAccount').modal('show');
+			}
+		</script>
+
+		<!-- modal -->
+		<div class="modal fade" id="confirmDeleteAccount" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+			  <div class="modal-content">
+				<div class="modal-header">
+				  <h5 class="modal-title">Xác nhận thông tin</h5>
+				  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				  </button>
+				</div>
+				<div class="modal-body">
+				  Bạn muốn xóa tài khoản "<strong id="fullname"></strong>"?
+				</div>
+				<div class="modal-footer">
+					<a id="yesOption" type="button" class="btn btn-danger">Xóa</a>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+				</div>
+			  </div>
+			</div>
+		  </div>
+	</div>
+
+</body>
+
+</html>

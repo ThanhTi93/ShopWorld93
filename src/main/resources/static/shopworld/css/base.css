@@ -1,0 +1,23 @@
+@charset "ISO-8859-1";
+:root{
+    --white-color: #fff;
+    --black-color: #000;
+    --red-color: #cd1817;
+    /* --primary-color: #EE4D2D;
+    --border-color: #dbdbdb; */
+
+    --navbar-height: 34px;
+    --header-height: 120px;
+    --header-width-search-heigth: calc(var(var(--header-height)) - var(var(--navbar-height)));
+}
+
+*{
+    box-sizing: inherit;
+}
+
+html{
+    /* font-size: 62.5%; tuong duong vs 10px */
+    /* line-height: 1.6rem; */
+    font-family: 'Roboto',Arial,Helvetica,sans-serif;
+    box-sizing: border-box;
+}

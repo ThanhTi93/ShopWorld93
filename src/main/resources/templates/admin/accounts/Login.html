@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+<link rel="stylesheet" href="/shopworld/css/login.css">
+</head>
+<body>
+	<section>
+		<div class="row">
+			<div class="logo">
+				<img src="/shopworld/images/logoshopworld.png" alt="">
+				<h3>Chất lượng tạo nên thương hiệu</h3>
+				<h5>Nhanh chóng - Tiện lợi - An toàn</h5>
+			</div>
+			<div class="login">
+				<h3>Đăng nhập tài khoản ShopWorld</h3>
+				 <div th:if="${message != null}" class="alert alert-success" role="alert">
+                            <i>[[${message}]]</i>
+                        </div>
+                        <div th:if="${error != null}" class="alert alert-danger" role="alert">
+                            <i>[[${error}]]</i>
+                        </div>				
+				<form th:action="@{/login}" method="post" th:object="${account}">
+					<div class="content1">
+						<label for="user">Tên đăng nhập</label> <br> 
+						<input type="text" name="user" placeholder=" Enter Username" th:field="*{username}"><br>
+						 <small th:if="${#fields.hasErrors('username')}">
+                                Tên đăng nhập không được để trống!
+                            </small>					
+							 <label for="password">Mật khẩu</label><br> 
+							 <input type="password" name="password" placeholder=" Enter Password" th:field="*{password}"><br>
+							 <small th:if="${#fields.hasErrors('password')}">
+                                Mật khẩu không được để trống!
+                            </small>					 
+					</div>
+					<div class="content2">
+						<a href="">Quên mật khẩu</a>
+					</div>
+					<button type="submit">Đăng nhập</button>
+				</form>
+				<div class="footer">
+					<span>Bạn chưa có tài khoản? </span><a href="">Đăng ký</a>
+				</div>
+			</div>
+		</div>
+
+	</section>
+</body>
+</html>

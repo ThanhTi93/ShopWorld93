@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{admin/dashboardLayout.html}">
+
+<head>
+</head>
+
+<body>      
+            <!-- list-product -->
+            <div class="list-product" layout:fragment="content">
+                <h2>Danh sách sản phẩm</h2>
+                <hr>
+                <a th:href="@{/admin/products/add}" class="btn btn-success">Thêm mới sản phẩm</a>
+
+                <div th:if="${message != null}" class="alert alert-success mt-3" role="alert">
+                    <i>[[${message}]]</i>
+                </div>                
+                <form th:action="@{/admin/products}" class="col-10 mb-3 mt-5">
+                    <div class="row">
+                        <input type="text" class="form-control col-8" 
+                        name="name1" placeholder="Tên sản phẩm">
+                        <button class="btn btn-primary">Tìm kiếm</button>
+                    </div>
+                </form>
+                <div class="row">
+                <div class="col-10 mb-3 mt-5">
+                    <h4>Import Book data as a CSV file...</h4>
+                    <form action="/admin/products/import-csv-product" method="POST" enctype="multipart/form-data">
+                        <div class="input-group">
+                            <input name="file" type="file" class="form-control col-4"/>
+                            <button type="submit" class="btn btn-info">Import</button>
+                             <a href="/admin/products/export-csv-product">
+                                 <button type="button" class="btn btn-success">Export to CSV</button>
+                             </a>
+                        </div>                                         
+                    </form>                  
+                </div>
+            </div>
+                
+                <table class="table table-bordered table-striped" th:if="${productPage.hasContent()}" id="myTable" >
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)" >Hình ảnh</th>
+                            <th onclick="sortTable(1)" >ID</th>
+                            <th onclick="sortTable(2)" >Tên sản phẩm</th>
+                            <th onclick="sortTable(3)" >Số lượng</th>
+                            <th onclick="sortTable(4)" >Giá sản phẩm</th>
+                            <th onclick="sortTable(5)" >Giảm giá</th>                          
+                            <th onclick="sortTable(6)" >Loại hàng</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody-list-product">
+                        <tr th:each="item, isStat : ${productPage.content}">
+                            <td class="td-img">
+                                <img th:src="@{${'/admin/products/images/' + item.image}}" alt="">
+                            </td>
+                            <td class="td-id">[[${item.productId}]]</td>
+                            <td th:text="${item.name}"></td>
+                            <td th:text="${item.quantity}"></td>
+                            <td th:text="${#numbers.formatDecimal(item.newPrice, 0, 'POINT', 0, 'POINT')}"></td>
+                            <td th:text="${item.discount}"></td>               
+                            <td th:text="${item.category.name}"></td>
+                            <td>
+                                <a th:href="@{'/admin/products/edit/' + ${item.productId}}" class="btn btn-outline-info ml-3"><i
+                                        class="fa-solid fa-pen-to-square"></i></a>
+                                <a  th:data-id="${item.productId}" 
+                                    th:data-name="${item.name}"
+                                    onclick="showConfirmModalDialog(this.getAttribute('data-id'), this.getAttribute('data-name'))"
+                                    class="btn btn-outline-danger ml-3"><i class="fa-solid fa-trash-can"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <script>
+                function sortTable(n) {
+            		  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            		  table = document.getElementById("myTable");
+            		  switching = true;
+            		  //Set the sorting direction to ascending:
+            		  dir = "asc"; 
+            		  /*Make a loop that will continue until
+            		  no switching has been done:*/
+            		  while (switching) {
+            		    //start by saying: no switching is done:
+            		    switching = false;
+            		    rows = table.rows;
+            		    /*Loop through all table rows (except the
+            		    first, which contains table headers):*/
+            		    for (i = 1; i < (rows.length - 1); i++) {
+            		      //start by saying there should be no switching:
+            		      shouldSwitch = false;
+            		      /*Get the two elements you want to compare,
+            		      one from current row and one from the next:*/
+            		      x = rows[i].getElementsByTagName("TD")[n];
+            		      y = rows[i + 1].getElementsByTagName("TD")[n];
+            		      /*check if the two rows should switch place,
+            		      based on the direction, asc or desc:*/
+            		      if (dir == "asc") {
+            		        //n == 2 -> sort a numeric column
+            		        // numeric column -> using Number(x.innerHTML)
+            		        // character column -> using x.innerHTML.toLowerCase()
+            		        if (n == 1) {
+            		          if (Number(x.innerHTML) > Number(y.innerHTML)) {
+            		            //if so, mark as a switch and break the loop:
+            		            shouldSwitch= true;
+            		            break;
+            		          }
+            		        } else {
+            		          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            		            //if so, mark as a switch and break the loop:
+            		            shouldSwitch= true;
+            		            break;
+            		          }
+            		        }
+            		      } else if (dir == "desc") {
+            		        if (n == 1) {
+            		          if (Number(x.innerHTML) < Number(y.innerHTML)) {
+            		            //if so, mark as a switch and break the loop:
+            		            shouldSwitch = true;
+            		            break;
+            		          }
+            		        } else {
+            		          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            		            //if so, mark as a switch and break the loop:
+            		            shouldSwitch = true;
+            		            break;
+            		          }
+            		        }
+            		      }
+            		    }
+            		    if (shouldSwitch) {
+            		      /*If a switch has been marked, make the switch
+            		      and mark that a switch has been done:*/
+            		      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            		      switching = true;
+            		      //Each time a switch is done, increase this count by 1:
+            		      switchcount ++;      
+            		    } else {
+            		      /*If no switching has been done AND the direction is "asc",
+            		      set the direction to "desc" and run the while loop again.*/
+            		      if (switchcount == 0 && dir == "asc") {
+            		        dir = "desc";
+            		        switching = true;
+            		      }
+            		    }
+            		  }
+            		}
+                
+                    function showConfirmModalDialog(id, name) {
+                        $('#productName').text(name);
+                        $('#yesOption').attr('href', '/admin/products/delete/' + id);
+                        $('#confirmDeleteProduct').modal('show');
+                    }
+                </script>
+
+                <!-- modal -->
+                <div class="modal fade" id="confirmDeleteProduct" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Xác nhận thông tin</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          Bạn muốn xóa sản phẩm "<strong id="productName"></strong>"?
+                        </div>
+                        <div class="modal-footer">
+                            <a id="yesOption" type="button" class="btn btn-danger mr-3">Xóa</a>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                
+                <form action="">
+                    <div class="form-inline float-left">
+                        <label for="size" class="mr-3">Page Size: </label>
+                        <select name="size" id="size" class="form-control" 
+                            onchange="this.form.submit()">
+                            <option th:selected="${productPage.size == 5}" value="5">5</option>
+                            <option th:selected="${productPage.size == 10}" value="10">10</option>
+                            <option th:selected="${productPage.size == 15}" value="15">15</option>
+                            <option th:selected="${productPage.size == 20}" value="20">20</option>
+                            <option th:selected="${productPage.size == 30}" value="30">30</option>
+                        </select>
+                    </div>
+                </form>
+                
+                    <nav aria-label="Page navigation" 
+                    th:if="${productPage.totalPages > 0}">
+                    <ul class="pagination justify-content-center">
+                    <li th:class="${1 == productPage.number + 1} ? 'page-item active' : 'page-item'">
+                        <a th:href="@{/admin/products(name=${productName}, size=${productPage.size}, page=${1})}" class="page-link">First</a>
+                    </li>
+                    
+                    <li class="page-item" th:each="pageNumber : ${pageNumbers}" 
+                        th:if="${productPage.totalPages > 1}"
+                        th:class = "${pageNumber == productPage.number + 1} ? 'page-item active' : 'page-item'">
+                        <a th:href="@{/admin/products(name=${productName}, size=${productPage.size}, page=${pageNumber})}" class="page-link"
+                        th:text="${pageNumber}" ></a>
+                    </li>
+                    
+                    <li th:class="${productPage.totalPages == productPage.number + 1} ? 'page-item active' : 'page-item'">
+                        <a th:href="@{/admin/products(name=${productName}, size=${productPage.size}, page=${productPage.totalPages})}" class="page-link">Last</a>
+                    </li>
+                    </ul>
+                </nav>
+            </div>
+</body>
+
+</html>

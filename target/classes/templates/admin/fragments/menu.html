@@ -1,0 +1,21 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" 
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+  <head>
+
+  </head>
+  <body>
+    <div th:fragment="menu">
+        <ul class="nav-list">
+            <li class="nav-list-item"><a th:href="@{/admin/categories}"><i class="fa-solid fa-list mr-2"></i> Quản lý danh mục</a> </li>
+            <li class="nav-list-item"><a th:href="@{/admin/products}"><i class="fa-brands fa-buffer mr-2"></i> Quản lý sản phẩm</a> </li>
+            <li class="nav-list-item"><a th:href="@{/admin/order}"><i class="fa-solid fa-cart-shopping mr-2"></i> Quản lý đơn hàng</a> </li>
+            <li class="nav-list-item"><a th:href="@{/admin/accounts}"><i class="fa-solid fa-user-lock mr-2"></i> Quản lý tài khoản</a> </li>
+            <li class="nav-list-item"><a th:href="@{/admin/statistical}"><i class="fa-solid fa-chart-simple mr-2"></i> Thống kê</a> </li>
+            <li class="nav-list-item"><a th:href="@{/admin/profile}"><i class="fa-solid fa-user mr-2"></i> Thông tin cá nhân</a> </li>
+        </ul>
+    </div>
+  </body>
+  </html>
+

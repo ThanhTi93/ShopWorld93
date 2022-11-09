@@ -1,0 +1,27 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" 
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+  <head>
+
+  </head>
+  <body>
+    <div th:fragment="header">
+        <div class="col-10 offset-1">
+            <div class="row content-header">
+                <div class="title">
+                    <h5>ShopWorld - Trang Quản Trị</h5>
+                </div>
+                <div class="info">
+                    <div class="row">
+                        <h5><i class="fa-solid fa-user mr-1"></i> 
+                            Xin chào <span th:if="${session.username != null}">[[${session.username}]]</span>
+                        </h5>
+                        <a th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+  </html>
+

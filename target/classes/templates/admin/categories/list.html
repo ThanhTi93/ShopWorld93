@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{admin/dashboardLayout.html}">
+
+<head>
+</head>
+
+<body>
+	<!-- list-category -->
+	<div class="list-category" layout:fragment="content">
+		<h2>Danh sách danh mục</h2>
+		<hr>
+		<a th:href="@{/admin/categories/add}" class="btn btn-success">Thêm
+			mới danh mục</a>
+
+		<div th:if="${message != null}" class="alert alert-success mt-3"
+			role="alert">
+			<i>[[${message}]]</i>
+		</div>
+		<div th:if="${error != null}" class="alert alert-danger mt-3"
+			role="alert">
+			<i>[[${error}]]</i>
+		</div>
+		<div th:if="${!categoryPage.hasContent()}"
+			class="alert alert-danger mt-3" role="alert">
+			<i>Tên loại hàng không tồn tại</i>
+		</div>
+
+		<form th:action="@{/admin/categories}" class="col-10 mb-3 mt-5">
+			<div class="row">
+				<input type="text" class="form-control col-8" name="name1"
+					placeholder="Tên danh mục">
+				<button class="btn btn-primary">Tìm kiếm</button>
+			</div>
+		</form>
+		<div class="col-10 mb-3 mt-5">
+                    <h4>Import Book data as a CSV file...</h4>
+                    <form th:action="@{/admin/categories/import-csv}" method="POST" enctype="multipart/form-data">
+                        <div class="input-group">
+                            <input name="file" type="file" class="form-control col-4"/>
+                            <button type="submit" class="btn btn-info">Import</button>
+                             <a th:href="@{/admin/categories/export-csv}">
+                                 <button type="button" class="btn btn-success">Export to CSV</button>
+                             </a>
+                        </div>                       
+                        
+                    </form>                  
+                </div>
+		<table class="table table-bordered table-striped"
+			th:if="${categoryPage.hasContent()}" id="myTable">
+			<thead>
+				<tr>
+					<th onclick="sortTable(0)">ID</th>
+					<th onclick="sortTable(1)">Tên danh mục</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody class="tbody-list-product">
+				<tr th:each="item, isStat : ${categoryPage.content}">
+					<td>[[${item.id}]]</td>
+					<td th:text="${item.name}"></td>
+					<td><a th:href="@{'/admin/categories/edit/' + ${item.id}}"
+						class="btn btn-outline-info ml-3"><i
+							class="fa-solid fa-pen-to-square"></i></a> <a th:data-id="${item.id}"
+						th:data-name="${item.name}"
+						onclick="showConfirmModalDialogCategory2(this.getAttribute('data-id'), this.getAttribute('data-name'))"
+						class="btn btn-outline-danger ml-3"><i
+							class="fa-solid fa-trash-can"></i></a></td>
+				</tr>
+			</tbody>
+		</table>
+		<script>
+
+		function sortTable(n) {
+		  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+		  table = document.getElementById("myTable");
+		  switching = true;
+		  //Set the sorting direction to ascending:
+		  dir = "asc"; 
+		  /*Make a loop that will continue until
+		  no switching has been done:*/
+		  while (switching) {
+		    //start by saying: no switching is done:
+		    switching = false;
+		    rows = table.rows;
+		    /*Loop through all table rows (except the
+		    first, which contains table headers):*/
+		    for (i = 1; i < (rows.length - 1); i++) {
+		      //start by saying there should be no switching:
+		      shouldSwitch = false;
+		      /*Get the two elements you want to compare,
+		      one from current row and one from the next:*/
+		      x = rows[i].getElementsByTagName("TD")[n];
+		      y = rows[i + 1].getElementsByTagName("TD")[n];
+		      /*check if the two rows should switch place,
+		      based on the direction, asc or desc:*/
+		      if (dir == "asc") {
+		        //n == 2 -> sort a numeric column
+		        // numeric column -> using Number(x.innerHTML)
+		        // character column -> using x.innerHTML.toLowerCase()
+		        if (n == 0) {
+		          if (Number(x.innerHTML) > Number(y.innerHTML)) {
+		            //if so, mark as a switch and break the loop:
+		            shouldSwitch= true;
+		            break;
+		          }
+		        } else {
+		          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+		            //if so, mark as a switch and break the loop:
+		            shouldSwitch= true;
+		            break;
+		          }
+		        }
+		      } else if (dir == "desc") {
+		        if (n == 0) {
+		          if (Number(x.innerHTML) < Number(y.innerHTML)) {
+		            //if so, mark as a switch and break the loop:
+		            shouldSwitch = true;
+		            break;
+		          }
+		        } else {
+		          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+		            //if so, mark as a switch and break the loop:
+		            shouldSwitch = true;
+		            break;
+		          }
+		        }
+		      }
+		    }
+		    if (shouldSwitch) {
+		      /*If a switch has been marked, make the switch
+		      and mark that a switch has been done:*/
+		      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+		      switching = true;
+		      //Each time a switch is done, increase this count by 1:
+		      switchcount ++;      
+		    } else {
+		      /*If no switching has been done AND the direction is "asc",
+		      set the direction to "desc" and run the while loop again.*/
+		      if (switchcount == 0 && dir == "asc") {
+		        dir = "desc";
+		        switching = true;
+		      }
+		    }
+		  }
+		}
+
+			function showConfirmModalDialogCategory2(id, name) {
+				$('#categoryName').text(name);
+				$('#yesOption').attr('href', '/admin/categories/delete/' + id);
+				$('#confirmDeleteCategory').modal('show');
+			}
+		</script>
+
+		<!-- modal -->
+		<div class="modal fade" id="confirmDeleteCategory"
+			data-backdrop="static" data-keyboard="false" tabindex="-1"
+			aria-labelledby="staticBackdropLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Xác nhận thông tin</h5>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						Bạn muốn xóa loại hàng "<strong id="categoryName"></strong>"?
+					</div>
+					<div class="modal-footer">
+						<a id="yesOption" type="button" class="btn btn-danger">Xóa</a>
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">Hủy</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<form action="">
+			<div class="form-inline float-left">
+				<label for="size" class="mr-3">Page Size: </label> <select
+					name="size" id="size" class="form-control"
+					onchange="this.form.submit()">
+					<option th:selected="${categoryPage.size == 5}" value="5">5</option>
+					<option th:selected="${categoryPage.size == 10}" value="10">10</option>
+					<option th:selected="${categoryPage.size == 15}" value="15">15</option>
+					<option th:selected="${categoryPage.size == 20}" value="20">20</option>
+					<option th:selected="${categoryPage.size == 30}" value="30">30</option>
+				</select>
+			</div>
+		</form>
+
+		<nav aria-label="Page navigation"
+			th:if="${categoryPage.totalPages > 0}">
+			<ul class="pagination justify-content-center">
+				<li
+					th:class="${1 == categoryPage.number + 1} ? 'page-item active' : 'page-item'">
+					<a
+					th:href="@{/admin/categories(name=${name}, size=${categoryPage.size}, page=${1})}"
+					class="page-link">First</a>
+				</li>
+
+				<li class="page-item" th:each="pageNumber : ${pageNumbers}"
+					th:if="${categoryPage.totalPages > 1}"
+					th:class="${pageNumber == categoryPage.number + 1} ? 'page-item active' : 'page-item'">
+					<a
+					th:href="@{/admin/categories(name=${name}, size=${categoryPage.size}, page=${pageNumber})}"
+					class="page-link" th:text="${pageNumber}"></a>
+				</li>
+
+				<li
+					th:class="${categoryPage.totalPages == categoryPage.number + 1} ? 'page-item active' : 'page-item'">
+					<a
+					th:href="@{/admin/categories(name=${name}, size=${categoryPage.size}, page=${categoryPage.totalPages})}"
+					class="page-link">Last</a>
+				</li>
+			</ul>
+		</nav>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{admin/dashboardLayout.html}">
+
+<head>
+</head>
+
+<body>      
+            <!-- list-account -->
+            <div class="list-account" layout:fragment="content">
+                <h2>Danh sách hóa đơn</h2>
+                <hr>
+                <div th:if="${error != null}" class="alert alert-danger mt-3" role="alert">
+                    <i>[[${error}]]</i>
+                </div>
+                <div th:if="${!orderPage.hasContent()}" class="alert alert-danger mt-3" role="alert">
+                    <i>Tên khách hàng không tồn tại</i>
+                </div>
+
+                <form th:action="@{/admin/order}" class="col-10 mb-3 mt-5">
+                    <div class="row">
+                        <input type="text" class="form-control col-8" 
+                        name="name" placeholder="Tên khách hàng">
+                        <button class="btn btn-primary">Tìm kiếm</button>
+                    </div>
+                </form>
+
+                <div th:if="${message != null}" class="alert alert-success mt-3" role="alert">
+                    <i>[[${message}]]</i>
+                </div>
+
+                <table class="table table-bordered table-striped" th:if="${orderPage.hasContent()}">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày tạo</th>
+                            <th>Địa chỉ</th>
+                            <th>Thanh toán</th>
+                            <th>Trạng thái</th>                          
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody-list-product">
+                        <tr th:each="item, isStat : ${orderPage.content}">
+                            <td>[[${item.orderId}]]</td>
+                            <td th:text="${item.name}"></td>
+                            <td th:text="${#dates.format(item.orderDate, 'dd-MM-yyyy')}"></td>
+                            <td th:text="${item.address}"></td>
+                            <td th:text="${item.statusCheckout} == false ? 'Chưa thanh toán' : 'Đã thanh toán'"></td>
+                            <td th:switch="${item.status}"> 
+                                <span th:case="0">Đang xử lý</span>
+                                <span th:case="1">Đang vận chuyển</span>
+                                <span th:case="2">Đã giao</span>
+                            </td>                       
+                            <td>
+                            
+                                <a th:href="@{'/admin/order/edit/' + ${item.orderId}}" class="btn btn-outline-info ml-3"><i
+                                        class="fa-solid fa-pen-to-square"></i></a>
+                                <a  th:data-id="${item.orderId}" 
+                                    th:data-name="${item.orderId}"
+                                    onclick="showConfirmModalDialogAccount1(this.getAttribute('data-id'), this.getAttribute('data-name'))" 
+                                    class="btn btn-outline-danger ml-3"><i
+                                    class="fa-solid fa-trash-can"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <script>
+                    function showConfirmModalDialogAccount1(id, name) {
+                        $('#orderId').text(name);
+                        $('#yesOption').attr('href', '/admin/order/delete/' + id);
+                        $('#confirmDeleteAccount').modal('show');
+                    }
+                </script>
+        
+                <!-- modal -->
+                <div class="modal fade" id="confirmDeleteAccount" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">Xác nhận thông tin</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          Bạn muốn xóa hóa đơn "<strong id="orderId"></strong>"?
+                        </div>
+                        <div class="modal-footer">
+                            <a id="yesOption" type="button" class="btn btn-danger">Xóa</a>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                
+                <form action="">
+                    <div class="form-inline float-left">
+                        <label for="size" class="mr-3">Page Size: </label>
+                        <select name="size" id="size" class="form-control" 
+                            onchange="this.form.submit()">
+                            <option th:selected="${orderPage.size == 5}" value="5">5</option>
+                            <option th:selected="${orderPage.size == 10}" value="10">10</option>
+                            <option th:selected="${orderPage.size == 15}" value="15">15</option>
+                            <option th:selected="${orderPage.size == 20}" value="20">20</option>
+                            <option th:selected="${orderPage.size == 30}" value="30">30</option>
+                        </select>
+                    </div>
+                </form>
+                
+                    <nav aria-label="Page navigation" 
+                    th:if="${orderPage.totalPages > 0}">
+                    <ul class="pagination justify-content-center">
+                    <li th:class="${1 == orderPage.number + 1} ? 'page-item active' : 'page-item'">
+                        <a th:href="@{/admin/order(name=${name}, size=${orderPage.size}, page=${1})}" class="page-link">First</a>
+                    </li>
+                    
+                    <li class="page-item" th:each="pageNumber : ${pageNumbers}" 
+                        th:if="${orderPage.totalPages > 1}"
+                        th:class = "${pageNumber == orderPage.number + 1} ? 'page-item active' : 'page-item'">
+                        <a th:href="@{/admin/order(name=${name}, size=${orderPage.size}, page=${pageNumber})}" class="page-link"
+                        th:text="${pageNumber}" ></a>
+                    </li>
+                    
+                    <li th:class="${orderPage.totalPages == orderPage.number + 1} ? 'page-item active' : 'page-item'">
+                        <a th:href="@{/admin/order(name=${name}, size=${orderPage.size}, page=${orderPage.totalPages})}" class="page-link">Last</a>
+                    </li>
+                    </ul>
+                </nav>
+            </div>
+</body>
+
+</html>
